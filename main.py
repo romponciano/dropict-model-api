@@ -16,22 +16,13 @@ def check_permissions():
   hashedWord = sha256(request.headers.get('Authorization').encode('utf-8')).hexdigest()
   if hashedWord == passAuth:
       return -1
-  return jsonify({"message": "Sem permissão"})
+  return jsonify({"predict": "Sem permissão"})
 
 def load_model(dataRow):
   loaded_model = joblib.load('./static/dt.sav')
   out = loaded_model.predict(dataRow)
   print(out)
   return out
-
-@app.route('/', methods=['GET', 'POST', 'OPTIONS'])
-@cross_origin()
-def home():  
-  out = check_permissions()
-  if(out == -1):
-    return jsonify({"message": "Com permissão"})
-  else:
-    return out
 
 @app.route('/predict', methods=['POST'])
 @cross_origin()
@@ -63,7 +54,11 @@ def getPredict():
       'qtde_resid_casa', 'Renda_Familiar', 'PC_casa'
     ])
 
-    resposta = str(load_model(df) == 0)
+    resposta = 'error'
+    if(load_model(df) == 0):
+      resposta = 'sim'
+    else:
+      resposta = 'nao'
     
     return make_response(jsonify({'predict': resposta}), 200)
 
