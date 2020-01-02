@@ -1,8 +1,9 @@
 import os
 from hashlib import sha256
-import json
 # externals must be added to requirements.txt
 from flask import Flask, jsonify, request, make_response
+import joblib
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -13,6 +14,12 @@ def check_permissions():
   if hashedWord == passAuth:
       return -1
   return jsonify({"message": "Sem permissão"})
+
+def load_model(dataRow):
+  loaded_model = joblib.load('./static/dt.sav')
+  out = loaded_model.predict(dataRow)
+  print(out)
+  return out
 
 @app.route('/')
 def home():
@@ -26,24 +33,34 @@ def home():
 def getPredict():
   out = check_permissions()
   if(out == -1): 
-    row = []
-    row.append(request.json['forum'])
-    row.append(request.json['mod_discussion'])
-    row.append(request.json['total_acesso'])
-    row.append(request.json['nota_ead'])
-    row.append(request.json['nota_alg'])
-    row.append(request.json['nota_fdw'])
-    row.append(request.json['nota_fmi'])
-    row.append(request.json['nota_mat'])
-    row.append(request.json['sexo'])
-    row.append(request.json['idade'])
-    row.append(request.json['e_civil'])
-    row.append(request.json['raca'])
-    row.append(request.json['trabalha'])
-    row.append(request.json['qtde_resid_casa'])
-    row.append(request.json['renda_familiar'])
-    row.append(request.json['pc_casa'])
-    return make_response(jsonify({'predict': 'NAO'}), 200)
+    data = [[
+      request.json['forum'],
+      request.json['mod_discussion'],
+      request.json['total_acesso'],
+      request.json['nota_ead'],
+      request.json['nota_alg'],
+      request.json['nota_fdw'],
+      request.json['nota_fmi'],
+      request.json['nota_mat'],
+      request.json['sexo'],
+      request.json['idade'],
+      request.json['e_civil'],
+      request.json['raca'],
+      request.json['trabalha'],
+      request.json['qtde_resid_casa'],
+      request.json['renda_familiar'],
+      request.json['pc_casa']
+    ]]
+    
+    df = pd.DataFrame(data, columns =[
+      'FORUM', 'MOD_DISCUSSION', 'TOTAL_ACESSO', 'NOTA_EAD', 'NOTA_ALG', 'NOTA_FDW',
+      'NOTA_FMI', 'NOTA_MAT', 'Sexo', 'Idade', 'E_Civil', 'Raca', 'trabalha', 
+      'qtde_resid_casa', 'Renda_Familiar', 'PC_casa'
+    ])
+
+    resposta = str(load_model(df) == 0)
+    
+    return make_response(jsonify({'predict': resposta}), 200)
 
 @app.errorhandler(404)
 def not_found(error):
