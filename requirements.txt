@@ -7,3 +7,4 @@ Werkzeug
 joblib
 sklearn
 pandas
+flask_cors

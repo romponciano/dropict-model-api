@@ -2,10 +2,13 @@ import os
 from hashlib import sha256
 # externals must be added to requirements.txt
 from flask import Flask, jsonify, request, make_response
+from flask_cors import CORS, cross_origin
 import joblib
 import pandas as pd
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 passAuth = '0e08e019a48d4f00860082806b81b1eedc275818d99246bd32576b799557fa20'
 
@@ -21,15 +24,17 @@ def load_model(dataRow):
   print(out)
   return out
 
-@app.route('/')
-def home():
+@app.route('/', methods=['GET', 'POST', 'OPTIONS'])
+@cross_origin()
+def home():  
   out = check_permissions()
   if(out == -1):
     return jsonify({"message": "Com permissão"})
   else:
     return out
 
-@app.route('/predict')
+@app.route('/predict', methods=['POST'])
+@cross_origin()
 def getPredict():
   out = check_permissions()
   if(out == -1): 
