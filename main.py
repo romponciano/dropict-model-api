@@ -56,9 +56,9 @@ def getPredict():
 
     resposta = 'error'
     if(load_model(df) == 0):
-      resposta = 'sim'
-    else:
       resposta = 'nao'
+    else:
+      resposta = 'sim'
     
     return make_response(jsonify({'predict': resposta}), 200)
 
