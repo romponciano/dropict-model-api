@@ -27,7 +27,7 @@ def load_model(dataRow):
   selected = (selectedIa.split("'"))[1]
   out = ''
   if(selected == 'knn'):
-    resp = knn_model.predict(dataRow)
+    out = knn_model.predict(dataRow)
     print('Predicao feita do knn: ', out)
   elif(selected == 'dt'):
     out = dt_model.predict(dataRow)
