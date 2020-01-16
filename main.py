@@ -6,6 +6,10 @@ from flask_cors import CORS, cross_origin
 import joblib
 import pandas as pd
 
+dt_model = joblib.load('./static/dt.sav')
+dnn_model = joblib.load('./static/dnn.sav')
+knn_model = joblib.load('./static/knn.sav')
+
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -19,9 +23,19 @@ def check_permissions():
   return jsonify({"predict": "Sem permissão"})
 
 def load_model(dataRow):
-  loaded_model = joblib.load('./static/dt.sav')
-  out = loaded_model.predict(dataRow)
-  print(out)
+  selectedIa = str(request.headers.get('SelectedIA').encode('utf-8'))
+  selected = (selectedIa.split("'"))[1]
+  out = ''
+  if(selected == 'knn'):
+    resp = knn_model.predict(dataRow)
+    print('Predicao feita do knn: ', out)
+  elif(selected == 'dt'):
+    out = dt_model.predict(dataRow)
+    print('Predicao feita do dt: ', out)
+  elif(selected == 'dnn'):
+    resp = dnn_model.predict(dataRow)
+    print('Predicao feita do dnn: ', resp)
+    out = resp[0][1]
   return out
 
 @app.route('/predict', methods=['POST'])
@@ -67,5 +81,9 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 if __name__ == "__main__":
+    dt_model = joblib.load('/static/dt.sav')
+    dnn_model = joblib.load('/static/dnn.sav')
+    knn_model = joblib.load('/static/knn.sav')
+
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
