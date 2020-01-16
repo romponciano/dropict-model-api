@@ -81,9 +81,9 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 if __name__ == "__main__":
-    dt_model = joblib.load('/static/dt.sav')
-    dnn_model = joblib.load('/static/dnn.sav')
-    knn_model = joblib.load('/static/knn.sav')
+    dt_model = joblib.load('./static/dt.sav')
+    dnn_model = joblib.load('./static/dnn.sav')
+    knn_model = joblib.load('./static/knn.sav')
 
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
