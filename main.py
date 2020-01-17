@@ -6,6 +6,7 @@ from flask_cors import CORS, cross_origin
 import joblib
 import pandas as pd
 
+# load models
 dt_model = joblib.load('./static/dt.sav')
 dnn_model = joblib.load('./static/dnn.sav')
 knn_model = joblib.load('./static/knn.sav')
