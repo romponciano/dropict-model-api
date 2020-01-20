@@ -31,6 +31,10 @@ def load_model(dataRow):
     resp = dnn_model.predict(dataRow)
     print('Predicao feita do knn: ', resp)
     out = resp[0][1]
+    if(out == 0):
+      out = 1
+    else:
+      out = 0
   elif(selected == 'dt'):
     out = dt_model.predict(dataRow)
     print('Predicao feita do dt: ', out)
