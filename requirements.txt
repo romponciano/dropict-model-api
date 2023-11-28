@@ -5,7 +5,7 @@ Jinja2
 MarkupSafe
 Werkzeug
 joblib
-sklearn
+scikit-learn
 pandas
 flask_cors
 gunicorn
